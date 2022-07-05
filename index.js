@@ -23,12 +23,14 @@ async function run() {
     const productCollection = client
       .db("headphone-inventory")
       .collection("products");
+
     app.get("/products", async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
     });
+
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -38,13 +40,13 @@ async function run() {
     });
 
     //POST
-
     app.post("/products", async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
       res.send(result);
     });
-    // update user
+
+    // update product
     app.put("/products/:id", async (req, res) => {
       const id = req.params.id;
       const updatedProduct = req.body;
@@ -62,6 +64,14 @@ async function run() {
         options
       );
       res.send(result);
+    });
+
+    // DELETE
+    app.delete('/products/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await productCollection.deleteOne(query);
+        res.send(result);
     });
     
   } finally {
